@@ -11,7 +11,7 @@ import {
   CommandSeparator,
 } from "cmdk";
 import { useHabitStore } from "@/store/habit-store";
-import { auth, signOut } from "@/lib/firebase";
+import { getAuthInstance, signOut } from "@/lib/firebase";
 import { toast } from "sonner";
 import {
   Search,
@@ -49,7 +49,7 @@ export function CommandMenu() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      await signOut(getAuthInstance());
       window.location.reload();
     } catch {
       toast.error("Failed to sign out");

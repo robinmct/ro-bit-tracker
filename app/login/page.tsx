@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  auth,
+  getAuthInstance,
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
@@ -45,7 +45,7 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(getAuthInstance(), email, password);
       router.replace("/");
     } catch (err: any) {
       toast.error(mapAuthError(err));
@@ -59,7 +59,7 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(getAuthInstance(), provider);
       router.replace("/");
     } catch (err: any) {
       if (err?.code === "auth/popup-blocked" || err?.code === "auth/popup-closed-by-user") {

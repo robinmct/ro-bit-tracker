@@ -62,27 +62,13 @@ function getFirebaseApp(): FirebaseApp {
   return app;
 }
 
-function getAuthInstance() {
+export function getAuthInstance() {
   return getAuth(getFirebaseApp());
 }
 
-function getDbInstance() {
+export function getDbInstance() {
   return getFirestore(getFirebaseApp());
 }
-
-// Re-export everything so callers don't need to change.
-// Auth and DB instances are resolved lazily at runtime (browser only).
-export const auth = new Proxy({} as ReturnType<typeof getAuth>, {
-  get(_target, prop) {
-    return (getAuthInstance() as any)[prop];
-  },
-});
-
-export const db = new Proxy({} as ReturnType<typeof getFirestore>, {
-  get(_target, prop) {
-    return (getDbInstance() as any)[prop];
-  },
-});
 
 export type { User };
 

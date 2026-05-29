@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { auth, createUserWithEmailAndPassword } from "@/lib/firebase";
+import { getAuthInstance, createUserWithEmailAndPassword } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +36,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(getAuthInstance(), email, password);
       router.replace("/");
     } catch (err: any) {
       toast.error(mapAuthError(err));

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
-import { db, doc, setDoc, deleteDoc } from "@/lib/firebase";
+import { getDbInstance, doc, setDoc, deleteDoc } from "@/lib/firebase";
 import { useHabitStore, type HabitType } from "@/store/habit-store";
 import {
   Dialog,
@@ -88,7 +88,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
         icon: icon.trim(),
       });
       if (user) {
-        await setDoc(doc(db, "users", user.uid, "habits", habit.id), {
+        await setDoc(doc(getDbInstance(), "users", user.uid, "habits", habit.id), {
           name: habit.name,
           type: habit.type,
           goal: habit.goal,
@@ -106,7 +106,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
         icon: icon.trim(),
       });
       if (user) {
-        await setDoc(doc(db, "users", user.uid, "habits", current.id), {
+        await setDoc(doc(getDbInstance(), "users", user.uid, "habits", current.id), {
           name: trimmedName,
           type,
           goal: numGoal,
@@ -124,7 +124,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
     const success = deleteHabit(current.id);
     if (success) {
       if (user) {
-        await deleteDoc(doc(db, "users", user.uid, "habits", current.id)).catch(() => {});
+        await deleteDoc(doc(getDbInstance(), "users", user.uid, "habits", current.id)).catch(() => {});
       }
       toast.success("Habit deleted");
       onOpenChange(false);

@@ -3,7 +3,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
-import { auth, signOut, db, doc, setDoc, collection, getDocs, onSnapshot } from "@/lib/firebase";
+import { getAuthInstance, signOut, getDbInstance, doc, setDoc, collection, getDocs, onSnapshot } from "@/lib/firebase";
 import { useHabitStore } from "@/store/habit-store";
 import { HabitSidebar } from "@/components/habit-sidebar";
 import { CalendarGrid } from "@/components/calendar-grid";
@@ -63,7 +63,7 @@ export function HabitTracker() {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const snap = await getDocs(collection(db, "users", user.uid, "habits"));
+      const snap = await getDocs(collection(getDbInstance(), "users", user.uid, "habits"));
       const list = snap.docs.map((d) => {
         const data = d.data();
         return {
@@ -86,7 +86,7 @@ export function HabitTracker() {
           color: "#a78bfa",
           icon: "💪",
         });
-        await setDoc(doc(db, "users", user.uid, "habits", h.id), {
+        await setDoc(doc(getDbInstance(), "users", user.uid, "habits", h.id), {
           name: h.name,
           type: h.type,
           goal: h.goal,
@@ -105,7 +105,7 @@ export function HabitTracker() {
     const unsubs: (() => void)[] = [];
 
     habits.forEach((habit) => {
-      const ref = doc(db, "users", user.uid, "habits", habit.id, "months", key);
+      const ref = doc(getDbInstance(), "users", user.uid, "habits", habit.id, "months", key);
       const unsub = onSnapshot(ref, (snap) => {
         const data = snap.exists() ? snap.data() || {} : {};
         let marks: Record<string, string | number> = {};
@@ -130,7 +130,7 @@ export function HabitTracker() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      await signOut(getAuthInstance());
       window.location.reload();
     } catch {
       toast.error("Failed to sign out");
@@ -147,7 +147,7 @@ export function HabitTracker() {
         storeSetMark(day, next);
         if (user) {
           const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
-          const ref = doc(db, "users", user.uid, "habits", currentHabit.id, "months", key);
+          const ref = doc(getDbInstance(), "users", user.uid, "habits", currentHabit.id, "months", key);
           const payload: Record<string, any> = {};
           if (next == null) {
             payload[`marks.${day}`] = null;
@@ -168,7 +168,7 @@ export function HabitTracker() {
     storeSetMark(day, val);
     if (user && currentHabit) {
       const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
-      const ref = doc(db, "users", user.uid, "habits", currentHabit.id, "months", key);
+      const ref = doc(getDbInstance(), "users", user.uid, "habits", currentHabit.id, "months", key);
       setDoc(ref, { [`marks.${day}`]: val }, { merge: true }).catch(() => {});
     }
     setProgressOpen(false);
