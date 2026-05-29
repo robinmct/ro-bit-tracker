@@ -36,9 +36,14 @@ function getFirebaseApp(): FirebaseApp {
     const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
     const measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
 
-    if (!apiKey || !authDomain || !projectId) {
+    const missing: string[] = [];
+    if (!apiKey) missing.push("NEXT_PUBLIC_FIREBASE_API_KEY");
+    if (!authDomain) missing.push("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN");
+    if (!projectId) missing.push("NEXT_PUBLIC_FIREBASE_PROJECT_ID");
+
+    if (missing.length > 0) {
       throw new Error(
-        "Missing environment variable: NEXT_PUBLIC_FIREBASE_* variables are not defined. Make sure .env.local is present and all NEXT_PUBLIC_FIREBASE_* variables are set."
+        `Missing environment variables: ${missing.join(", ")}. Make sure they are set in your .env.local file (for local dev) or in your Vercel project settings (for production), then redeploy.`
       );
     }
 

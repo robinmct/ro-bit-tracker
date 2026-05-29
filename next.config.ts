@@ -29,8 +29,8 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://*.gstatic.com",
-              "connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.firestore.app wss://*.firestore.app",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://*.gstatic.com https://apis.google.com",
+              "connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.firestore.app wss://*.firestore.app https://apis.google.com",
               "img-src 'self' data: https://*.googleusercontent.com https://*.googleapis.com",
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self'",
