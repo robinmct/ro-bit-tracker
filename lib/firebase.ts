@@ -21,16 +21,6 @@ import {
   type Unsubscribe,
 } from "firebase/firestore";
 
-function getEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(
-      `Missing environment variable: ${name}. Make sure .env.local is present and all NEXT_PUBLIC_FIREBASE_* variables are defined.`
-    );
-  }
-  return value;
-}
-
 let app: FirebaseApp | undefined;
 
 function getFirebaseApp(): FirebaseApp {
@@ -38,15 +28,30 @@ function getFirebaseApp(): FirebaseApp {
     throw new Error("Firebase can only be initialized in the browser.");
   }
   if (!app) {
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+    const messagingSenderId = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID;
+    const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+    const measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
+
+    if (!apiKey || !authDomain || !projectId) {
+      throw new Error(
+        "Missing environment variable: NEXT_PUBLIC_FIREBASE_* variables are not defined. Make sure .env.local is present and all NEXT_PUBLIC_FIREBASE_* variables are set."
+      );
+    }
+
     const firebaseConfig: FirebaseOptions = {
-      apiKey: getEnv("NEXT_PUBLIC_FIREBASE_API_KEY"),
-      authDomain: getEnv("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"),
-      projectId: getEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID"),
-      storageBucket: getEnv("NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"),
-      messagingSenderId: getEnv("NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"),
-      appId: getEnv("NEXT_PUBLIC_FIREBASE_APP_ID"),
-      measurementId: getEnv("NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"),
+      apiKey,
+      authDomain,
+      projectId,
+      storageBucket,
+      messagingSenderId,
+      appId,
+      measurementId,
     };
+
     app = initializeApp(firebaseConfig);
   }
   return app;
@@ -61,7 +66,7 @@ function getDbInstance() {
 }
 
 // Re-export everything so callers don't need to change.
-// Auth and DB instances are resolved lazily at runtime.
+// Auth and DB instances are resolved lazily at runtime (browser only).
 export const auth = new Proxy({} as ReturnType<typeof getAuth>, {
   get(_target, prop) {
     return (getAuthInstance() as any)[prop];
