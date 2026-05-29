@@ -10,6 +10,7 @@ export interface Habit {
   goal: number;
   color: string;
   icon: string;
+  order: number;
 }
 
 export interface MonthData {
@@ -33,9 +34,10 @@ interface HabitState {
 
   resetState: () => void;
   setUserId: (id: string | null) => void;
-  addHabit: (habit: Omit<Habit, "id">) => Habit;
+  addHabit: (habit: Omit<Habit, "id" | "order">) => Habit;
   updateHabit: (id: string, updates: Partial<Omit<Habit, "id">>) => void;
   deleteHabit: (id: string) => boolean;
+  swapHabit: (id: string, dir: "up" | "down") => void;
   setCurrentHabit: (id: string) => void;
   getCurrentHabit: () => Habit | undefined;
   navigateMonth: (dir: "prev" | "next") => void;
@@ -54,6 +56,115 @@ const STORAGE_KEY = "robit-habits";
 export const fmt = (y: number, m: number) =>
   `${y}-${String(m + 1).padStart(2, "0")}`;
 
+export function computeStats(
+  habit: Habit,
+  source: Record<string, MonthData>,
+  year: number,
+  month: number
+) {
+  if (!habit) return { done: 0, miss: 0, longest: 0, curr: 0, rate: 0 };
+
+  const md = source[fmt(year, month)] || {};
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const now = new Date();
+
+  const isDone = (dayVal: string | number | undefined) => {
+    if (habit.type === "binary") return dayVal === "done";
+    const goal = Number(habit.goal) || 1;
+    const v = Math.max(0, Number(dayVal || 0));
+    return v >= goal;
+  };
+
+  let done = 0,
+    miss = 0,
+    rate = 0;
+
+  if (habit.type === "binary") {
+    for (let d = 1; d <= daysInMonth; d++) {
+      if (md[d] === "done") done++;
+      else if (md[d] === "miss") miss++;
+    }
+    rate = Math.round((done / daysInMonth) * 100);
+  } else {
+    const goal = Number(habit.goal) || 1;
+    let completed = 0,
+      total = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const v = Math.max(0, Number(md[d] || 0));
+      total += Math.min(goal, v);
+      if (v >= goal) completed++;
+    }
+    done = completed;
+    miss = daysInMonth - completed;
+    rate = Math.round((total / (goal * daysInMonth)) * 100);
+  }
+
+  let monthKeys = Object.keys(source).sort();
+  const currKey = fmt(year, month);
+  if (!monthKeys.includes(currKey)) monthKeys.push(currKey);
+  monthKeys.sort();
+
+  const parseKey = (k: string) => {
+    const [yy, mm] = k.split("-").map(Number);
+    return new Date(yy, mm - 1, 1);
+  };
+  const start = monthKeys.length
+    ? parseKey(monthKeys[0])
+    : new Date(year, month, 1);
+  const end = new Date(year, month, 1);
+  const fullKeys: string[] = [];
+  for (
+    let d = new Date(start);
+    d <= end;
+    d = new Date(d.getFullYear(), d.getMonth() + 1, 1)
+  ) {
+    fullKeys.push(fmt(d.getFullYear(), d.getMonth()));
+  }
+
+  let longest = 0,
+    cur = 0;
+  for (let i = 0; i < fullKeys.length; i++) {
+    const [yy, mm] = fullKeys[i].split("-").map(Number);
+    const daysIn = new Date(yy, mm, 0).getDate();
+    const data =
+      source[fullKeys[i]] ||
+      (yy === year && mm === month + 1 ? md : {});
+    for (let d = 1; d <= daysIn; d++) {
+      if (isDone(data[d])) {
+        cur++;
+        if (cur > longest) longest = cur;
+      } else {
+        cur = 0;
+      }
+    }
+  }
+
+  const endDay =
+    year === now.getFullYear() && month === now.getMonth()
+      ? now.getDate()
+      : daysInMonth;
+  let curr = 0;
+  for (let i = fullKeys.length - 1; i >= 0; i--) {
+    const [yy, mm] = fullKeys[i].split("-").map(Number);
+    const data =
+      source[fullKeys[i]] ||
+      (yy === year && mm === month + 1 ? md : {});
+    const daysIn = new Date(yy, mm, 0).getDate();
+    let startD = daysIn;
+    if (yy === year && mm === month + 1) startD = endDay;
+    for (let d = startD; d >= 1; d--) {
+      if (isDone(data[d])) {
+        curr++;
+      } else {
+        i = -1;
+        break;
+      }
+    }
+  }
+
+  return { done, miss, longest, curr, rate };
+}
+
 export const useHabitStore = create<HabitState>()(
   persist(
     (set, get) => ({
@@ -71,6 +182,10 @@ export const useHabitStore = create<HabitState>()(
 
       addHabit: (habit) => {
         const id = String(Date.now());
+        const s = get();
+        const maxOrder = s.habits.length > 0
+          ? Math.max(...s.habits.map((h) => h.order))
+          : -1;
         const newHabit: Habit = {
           id,
           name: habit.name.trim() || "New Habit",
@@ -78,11 +193,12 @@ export const useHabitStore = create<HabitState>()(
           goal: habit.type === "binary" ? 1 : Number(habit.goal) || 1,
           color: habit.color || "#a78bfa",
           icon: habit.icon.trim(),
+          order: maxOrder + 1,
         };
-        set((s) => ({
-          habits: [...s.habits, newHabit],
+        set((state) => ({
+          habits: [...state.habits, newHabit],
           currentHabitId: id,
-          habitData: { ...s.habitData, [id]: {} },
+          habitData: { ...state.habitData, [id]: {} },
         }));
         return newHabit;
       },
@@ -122,6 +238,24 @@ export const useHabitStore = create<HabitState>()(
               : s.currentHabitId,
         });
         return true;
+      },
+
+      swapHabit: (id, dir) => {
+        set((s) => {
+          const idx = s.habits.findIndex((h) => h.id === id);
+          if (idx === -1) return s;
+          const swapIdx = dir === "up" ? idx - 1 : idx + 1;
+          if (swapIdx < 0 || swapIdx >= s.habits.length) return s;
+          const habitA = s.habits[idx];
+          const habitB = s.habits[swapIdx];
+          const newHabits = s.habits.map((h) => {
+            if (h.id === habitA.id) return { ...h, order: habitB.order };
+            if (h.id === habitB.id) return { ...h, order: habitA.order };
+            return h;
+          });
+          newHabits.sort((a, b) => a.order - b.order);
+          return { habits: newHabits };
+        });
       },
 
       setCurrentHabit: (id) => {
@@ -192,14 +326,16 @@ export const useHabitStore = create<HabitState>()(
 
       loadFromRemote: (habits) => {
         set((s) => {
+          const sorted = [...habits].sort((a, b) => a.order - b.order);
           const data: HabitDataMap = {};
-          habits.forEach((h) => {
+          sorted.forEach((h) => {
             data[h.id] = s.habitData[h.id] || {};
           });
+          const currentStillExists = sorted.find((h) => h.id === s.currentHabitId);
           return {
-            habits: [...habits],
+            habits: sorted,
             habitData: data,
-            currentHabitId: habits[0]?.id || null,
+            currentHabitId: currentStillExists ? s.currentHabitId : sorted[0]?.id || null,
           };
         });
       },
@@ -207,101 +343,12 @@ export const useHabitStore = create<HabitState>()(
       calculateStats: () => {
         const s = get();
         const h = s.getCurrentHabit();
-        if (!h) return { done: 0, miss: 0, longest: 0, curr: 0, rate: 0 };
-
-        const y = s.viewYear;
-        const m = s.viewMonth;
-        const md = s.getMonthData(h.id, y, m);
-        const daysInMonth = new Date(y, m + 1, 0).getDate();
-        const now = new Date();
-
-        const isDone = (dayVal: string | number | undefined) => {
-          if (h.type === "binary") return dayVal === "done";
-          const goal = Number(h.goal) || 1;
-          const v = Math.max(0, Number(dayVal || 0));
-          return v >= goal;
-        };
-
-        let done = 0, miss = 0, rate = 0;
-
-        if (h.type === "binary") {
-          for (let d = 1; d <= daysInMonth; d++) {
-            if (md[d] === "done") done++;
-            else if (md[d] === "miss") miss++;
-          }
-          rate = Math.round((done / daysInMonth) * 100);
-        } else {
-          const goal = Number(h.goal) || 1;
-          let completed = 0, total = 0;
-          for (let d = 1; d <= daysInMonth; d++) {
-            const v = Math.max(0, Number(md[d] || 0));
-            total += Math.min(goal, v);
-            if (v >= goal) completed++;
-          }
-          done = completed;
-          miss = daysInMonth - completed;
-          rate = Math.round((total / (goal * daysInMonth)) * 100);
-        }
-
-        // Cross-month streaks
         const source = s.userId
-          ? s.remoteData[h.id] || {}
-          : s.habitData[h.id] || {};
-        let monthKeys = Object.keys(source).sort();
-        const currKey = fmt(y, m);
-        if (!monthKeys.includes(currKey)) monthKeys.push(currKey);
-        monthKeys.sort();
-
-        const parseKey = (k: string) => {
-          const [yy, mm] = k.split("-").map(Number);
-          return new Date(yy, mm - 1, 1);
-        };
-        const start = monthKeys.length
-          ? parseKey(monthKeys[0])
-          : new Date(y, m, 1);
-        const end = new Date(y, m, 1);
-        const fullKeys: string[] = [];
-        for (let d = new Date(start); d <= end; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) {
-          fullKeys.push(fmt(d.getFullYear(), d.getMonth()));
-        }
-
-        let longest = 0, cur = 0;
-        for (let i = 0; i < fullKeys.length; i++) {
-          const [yy, mm] = fullKeys[i].split("-").map(Number);
-          const daysIn = new Date(yy, mm, 0).getDate();
-          const data = source[fullKeys[i]] || (yy === y && mm === m + 1 ? md : {});
-          for (let d = 1; d <= daysIn; d++) {
-            if (isDone(data[d])) {
-              cur++;
-              if (cur > longest) longest = cur;
-            } else {
-              cur = 0;
-            }
-          }
-        }
-
-        const endDay =
-          y === now.getFullYear() && m === now.getMonth()
-            ? now.getDate()
-            : daysInMonth;
-        let curr = 0;
-        for (let i = fullKeys.length - 1; i >= 0; i--) {
-          const [yy, mm] = fullKeys[i].split("-").map(Number);
-          const data = source[fullKeys[i]] || (yy === y && mm === m + 1 ? md : {});
-          const daysIn = new Date(yy, mm, 0).getDate();
-          let startD = daysIn;
-          if (yy === y && mm === m + 1) startD = endDay;
-          for (let d = startD; d >= 1; d--) {
-            if (isDone(data[d])) {
-              curr++;
-            } else {
-              i = -1;
-              break;
-            }
-          }
-        }
-
-        return { done, miss, longest, curr, rate };
+          ? s.remoteData[h?.id || ""] || {}
+          : s.habitData[h?.id || ""] || {};
+        return h
+          ? computeStats(h, source, s.viewYear, s.viewMonth)
+          : { done: 0, miss: 0, longest: 0, curr: 0, rate: 0 };
       },
 
       monthCompletionPercent: (habit, year, month) => {

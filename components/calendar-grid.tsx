@@ -1,8 +1,9 @@
 "use client";
 
-import { useHabitStore } from "@/store/habit-store";
-import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useHabitStore, fmt } from "@/store/habit-store";
+import { cn } from "@/lib/utils";
 
 interface CalendarGridProps {
   onDayClick: (day: number) => void;
@@ -10,24 +11,28 @@ interface CalendarGridProps {
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.008,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, scale: 0.85, y: 6 },
-  show: { opacity: 1, scale: 1, y: 0 },
-};
-
 export function CalendarGrid({ onDayClick }: CalendarGridProps) {
-  const { viewYear, viewMonth, getCurrentHabit, getMonthData } = useHabitStore();
-  const habit = getCurrentHabit();
+  const viewYear = useHabitStore((s) => s.viewYear);
+  const viewMonth = useHabitStore((s) => s.viewMonth);
+  const currentHabitId = useHabitStore((s) => s.currentHabitId);
+  const habits = useHabitStore((s) => s.habits);
+  const habitData = useHabitStore((s) => s.habitData);
+  const remoteData = useHabitStore((s) => s.remoteData);
+  const userId = useHabitStore((s) => s.userId);
+
+  const habit = useMemo(
+    () => habits.find((h) => h.id === currentHabitId) || habits[0],
+    [habits, currentHabitId]
+  );
+
+  const md = useMemo(() => {
+    if (!habit) return {};
+    const key = fmt(viewYear, viewMonth);
+    if (userId && remoteData[habit.id]?.[key]) {
+      return remoteData[habit.id][key];
+    }
+    return habitData[habit.id]?.[key] || {};
+  }, [habit, viewYear, viewMonth, habitData, remoteData, userId]);
 
   if (!habit) return null;
 
@@ -37,7 +42,6 @@ export function CalendarGrid({ onDayClick }: CalendarGridProps) {
   const isTodayMonth =
     today.getFullYear() === viewYear && today.getMonth() === viewMonth;
 
-  const md = getMonthData(habit.id, viewYear, viewMonth);
   const goal = Number(habit.goal) || 1;
 
   const totalCells = firstDayOfWeek + daysInMonth;
@@ -60,9 +64,9 @@ export function CalendarGrid({ onDayClick }: CalendarGridProps) {
       {/* Calendar grid */}
       <motion.div
         key={`${viewYear}-${viewMonth}`}
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
         className="grid flex-1 grid-cols-7 gap-1.5 sm:gap-2"
         style={{ gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }}
       >
@@ -86,21 +90,17 @@ export function CalendarGrid({ onDayClick }: CalendarGridProps) {
             showValue = String(v);
           }
 
-          // SVG ring for numeric habits
           const ringRadius = 16;
           const ringCircumference = 2 * Math.PI * ringRadius;
           const ringOffset = ringCircumference - (progressPct / 100) * ringCircumference;
 
           return (
-            <motion.button
+            <button
               key={day}
-              variants={itemVariants}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
               onClick={() => onDayClick(day)}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
               className={cn(
-                "group relative flex flex-col items-center justify-center rounded-lg border text-sm font-semibold transition-colors min-h-[48px] sm:min-h-[64px]",
+                "group relative flex flex-col items-center justify-center rounded-lg border text-sm font-semibold transition-all min-h-[48px] sm:min-h-[64px]",
+                "hover:scale-[1.04] active:scale-95 duration-150",
                 done
                   ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"
                   : miss
@@ -160,7 +160,7 @@ export function CalendarGrid({ onDayClick }: CalendarGridProps) {
                   </svg>
                 </div>
               )}
-            </motion.button>
+            </button>
           );
         })}
       </motion.div>

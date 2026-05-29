@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { useHabitStore } from "@/store/habit-store";
+import { useHabitStore, computeStats } from "@/store/habit-store";
 import { cn } from "@/lib/utils";
 import NumberFlow from "@number-flow/react";
 import {
@@ -17,15 +17,23 @@ export function StatsPanel() {
   const viewYear = useHabitStore((s) => s.viewYear);
   const viewMonth = useHabitStore((s) => s.viewMonth);
   const currentHabitId = useHabitStore((s) => s.currentHabitId);
+  const habits = useHabitStore((s) => s.habits);
   const habitData = useHabitStore((s) => s.habitData);
   const remoteData = useHabitStore((s) => s.remoteData);
   const userId = useHabitStore((s) => s.userId);
-  const calculateStats = useHabitStore((s) => s.calculateStats);
 
-  const stats = useMemo(
-    () => calculateStats(),
-    [calculateStats, viewYear, viewMonth, currentHabitId, habitData, remoteData, userId]
+  const currentHabit = useMemo(
+    () => habits.find((h) => h.id === currentHabitId),
+    [habits, currentHabitId]
   );
+
+  const stats = useMemo(() => {
+    if (!currentHabit) return { done: 0, miss: 0, longest: 0, curr: 0, rate: 0 };
+    const source = userId
+      ? remoteData[currentHabit.id] || {}
+      : habitData[currentHabit.id] || {};
+    return computeStats(currentHabit, source, viewYear, viewMonth);
+  }, [currentHabit, userId, remoteData, habitData, viewYear, viewMonth]);
 
   const items = [
     {

@@ -14,12 +14,11 @@ export default function HomePage() {
   const resetState = useHabitStore((s) => s.resetState);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+    if (!user) {
       resetState();
       router.replace("/login");
-    }
-    if (user) {
-      resetState();
+    } else {
       setUserId(user.uid);
     }
   }, [user, loading, router, setUserId, resetState]);

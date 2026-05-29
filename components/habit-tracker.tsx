@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { getAuthInstance, signOut, getDbInstance, doc, setDoc, collection, getDocs, onSnapshot } from "@/lib/firebase";
@@ -20,19 +20,12 @@ import { toast } from "sonner";
 
 export function HabitTracker() {
   const { user } = useAuth();
-  const {
-    habits,
-    viewYear,
-    viewMonth,
-    navigateMonth,
-    getCurrentHabit,
-    loadFromRemote,
-    setUserId,
-    resetState,
-    getMonthData,
-    setMark: storeSetMark,
-    setRemoteData,
-  } = useHabitStore();
+  const habits = useHabitStore((s) => s.habits);
+  const currentHabitId = useHabitStore((s) => s.currentHabitId);
+  const viewYear = useHabitStore((s) => s.viewYear);
+  const viewMonth = useHabitStore((s) => s.viewMonth);
+  const navigateMonth = useHabitStore((s) => s.navigateMonth);
+  const resetState = useHabitStore((s) => s.resetState);
 
   const [monthPickerOpen, setMonthPickerOpen] = useState(false);
   const [habitDialogOpen, setHabitDialogOpen] = useState(false);
@@ -41,7 +34,10 @@ export function HabitTracker() {
   const [progressDay, setProgressDay] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const currentHabit = getCurrentHabit();
+  const currentHabit = useMemo(
+    () => habits.find((h) => h.id === currentHabitId) || habits[0],
+    [habits, currentHabitId]
+  );
 
   // Listen for command palette events
   useEffect(() => {
@@ -54,14 +50,6 @@ export function HabitTracker() {
       window.removeEventListener("robit:edit-habit", editHandler);
     };
   }, []);
-
-  // Sync user ID
-  useEffect(() => {
-    if (user?.uid) {
-      resetState();
-      setUserId(user.uid);
-    }
-  }, [user, setUserId, resetState]);
 
   // Load habits from Firestore
   useEffect(() => {
@@ -77,12 +65,13 @@ export function HabitTracker() {
           goal: data.goal != null ? data.goal : 1,
           color: data.color || "#a78bfa",
           icon: data.icon || "",
+          order: typeof data.order === "number" ? data.order : 0,
         };
       });
+      const store = useHabitStore.getState();
       if (list.length) {
-        loadFromRemote(list);
-      } else if (habits.length === 0) {
-        const store = useHabitStore.getState();
+        store.loadFromRemote(list);
+      } else if (store.habits.length === 0) {
         const h = store.addHabit({
           name: "Exercise",
           type: "binary",
@@ -96,17 +85,19 @@ export function HabitTracker() {
           goal: h.goal,
           color: h.color,
           icon: h.icon,
+          order: h.order,
         });
       }
     };
     load();
-  }, [user, loadFromRemote, habits.length]);
+  }, [user]);
 
   // Subscribe to month data for all habits so percentages load async on mount
   useEffect(() => {
     if (!user || !habits.length) return;
     const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
     const unsubs: (() => void)[] = [];
+    const setRemoteData = useHabitStore.getState().setRemoteData;
 
     habits.forEach((habit) => {
       const ref = doc(getDbInstance(), "users", user.uid, "habits", habit.id, "months", key);
@@ -130,7 +121,7 @@ export function HabitTracker() {
     return () => {
       unsubs.forEach((u) => u());
     };
-  }, [user, habits, viewYear, viewMonth, setRemoteData]);
+  }, [user, habits, viewYear, viewMonth]);
 
   const handleSignOut = async () => {
     try {
@@ -145,11 +136,12 @@ export function HabitTracker() {
   const handleDayClick = useCallback(
     (day: number) => {
       if (!currentHabit) return;
+      const store = useHabitStore.getState();
       if (currentHabit.type === "binary") {
-        const md = getMonthData(currentHabit.id, viewYear, viewMonth);
+        const md = store.getMonthData(currentHabit.id, viewYear, viewMonth);
         const curr = md[day];
         const next = curr === "done" ? "miss" : curr === "miss" ? null : "done";
-        storeSetMark(day, next);
+        store.setMark(day, next);
         if (user) {
           const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
           const ref = doc(getDbInstance(), "users", user.uid, "habits", currentHabit.id, "months", key);
@@ -166,11 +158,12 @@ export function HabitTracker() {
         setProgressOpen(true);
       }
     },
-    [currentHabit, viewYear, viewMonth, getMonthData, storeSetMark, user]
+    [currentHabit, viewYear, viewMonth, user]
   );
 
   const handleProgressSave = (day: number, val: number) => {
-    storeSetMark(day, val);
+    const store = useHabitStore.getState();
+    store.setMark(day, val);
     if (user && currentHabit) {
       const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
       const ref = doc(getDbInstance(), "users", user.uid, "habits", currentHabit.id, "months", key);
