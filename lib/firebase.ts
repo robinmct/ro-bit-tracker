@@ -1,4 +1,4 @@
-import { initializeApp, type FirebaseOptions } from "firebase/app";
+import { initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
 import {
   getAuth,
   onAuthStateChanged,
@@ -31,19 +31,48 @@ function getEnv(name: string): string {
   return value;
 }
 
-const firebaseConfig: FirebaseOptions = {
-  apiKey: getEnv("NEXT_PUBLIC_FIREBASE_API_KEY"),
-  authDomain: getEnv("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"),
-  projectId: getEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID"),
-  storageBucket: getEnv("NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"),
-  messagingSenderId: getEnv("NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"),
-  appId: getEnv("NEXT_PUBLIC_FIREBASE_APP_ID"),
-  measurementId: getEnv("NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"),
-};
+let app: FirebaseApp | undefined;
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+function getFirebaseApp(): FirebaseApp {
+  if (typeof window === "undefined") {
+    throw new Error("Firebase can only be initialized in the browser.");
+  }
+  if (!app) {
+    const firebaseConfig: FirebaseOptions = {
+      apiKey: getEnv("NEXT_PUBLIC_FIREBASE_API_KEY"),
+      authDomain: getEnv("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"),
+      projectId: getEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID"),
+      storageBucket: getEnv("NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"),
+      messagingSenderId: getEnv("NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"),
+      appId: getEnv("NEXT_PUBLIC_FIREBASE_APP_ID"),
+      measurementId: getEnv("NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"),
+    };
+    app = initializeApp(firebaseConfig);
+  }
+  return app;
+}
+
+function getAuthInstance() {
+  return getAuth(getFirebaseApp());
+}
+
+function getDbInstance() {
+  return getFirestore(getFirebaseApp());
+}
+
+// Re-export everything so callers don't need to change.
+// Auth and DB instances are resolved lazily at runtime.
+export const auth = new Proxy({} as ReturnType<typeof getAuth>, {
+  get(_target, prop) {
+    return (getAuthInstance() as any)[prop];
+  },
+});
+
+export const db = new Proxy({} as ReturnType<typeof getFirestore>, {
+  get(_target, prop) {
+    return (getDbInstance() as any)[prop];
+  },
+});
 
 export type { User };
 
