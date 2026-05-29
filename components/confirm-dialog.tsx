@@ -24,7 +24,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-strong sm:max-w-sm rounded-2xl border-border/40 shadow-2xl shadow-primary/5">
+      <DialogContent className="glass-strong sm:max-w-sm rounded border-border/40 shadow-2xl shadow-primary/5">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold tracking-tight">
             Delete Habit
@@ -38,7 +38,7 @@ export function ConfirmDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="gap-1.5 rounded-xl border-border/60"
+            className="gap-1.5 rounded border-border/60"
           >
             <X className="h-4 w-4" />
             Cancel
@@ -46,7 +46,7 @@ export function ConfirmDialog({
           <Button
             variant="destructive"
             onClick={onConfirm}
-            className="gap-1.5 rounded-xl shadow-lg shadow-destructive/20"
+            className="gap-1.5 rounded shadow-lg shadow-destructive/20"
           >
             <Trash2 className="h-4 w-4" />
             Delete

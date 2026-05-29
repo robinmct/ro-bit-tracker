@@ -94,7 +94,7 @@ export function StatsPanel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 + i * 0.05, duration: 0.4 }}
           className={cn(
-            "glass flex flex-col items-center justify-center gap-0.5 rounded-xl sm:rounded-2xl p-2 sm:p-3 transition-all hover:shadow-lg",
+            "glass flex flex-col items-center justify-center gap-0.5 rounded sm:rounded p-2 sm:p-3 transition-all hover:shadow-lg",
             item.border
           )}
         >

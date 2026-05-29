@@ -184,7 +184,7 @@ export function HabitTracker() {
       {/* Glass Header */}
       <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/40 bg-background/60 px-4 backdrop-blur-xl sm:px-6">
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <SheetTrigger className="inline-flex items-center justify-center rounded-xl text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-10 w-10 md:hidden">
+          <SheetTrigger className="inline-flex items-center justify-center rounded text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-10 w-10 md:hidden">
             <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px] border-border/40 bg-background/80 p-0 backdrop-blur-2xl">
@@ -206,7 +206,7 @@ export function HabitTracker() {
         </Sheet>
 
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded bg-primary/10 ring-1 ring-primary/20">
             <Sparkles className="h-[1.125rem] w-[1.125rem] text-primary" />
           </div>
           <h1 className="text-lg font-bold tracking-tight">
@@ -218,7 +218,7 @@ export function HabitTracker() {
           <CommandMenu />
           <Badge
             variant="secondary"
-            className="hidden rounded-lg border border-border/30 bg-card/60 px-2.5 py-1 text-xs font-normal text-muted-foreground backdrop-blur-sm sm:inline-flex"
+            className="hidden rounded border border-border/30 bg-card/60 px-2.5 py-1 text-xs font-normal text-muted-foreground backdrop-blur-sm sm:inline-flex"
           >
             {user?.email}
           </Badge>
@@ -226,7 +226,7 @@ export function HabitTracker() {
             variant="ghost"
             size="icon"
             onClick={handleSignOut}
-            className="h-9 w-9 rounded-xl transition-all hover:bg-accent/50"
+            className="h-9 w-9 rounded transition-all hover:bg-accent/50"
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -252,7 +252,7 @@ export function HabitTracker() {
                 variant="ghost"
                 size="icon"
                 onClick={() => navigateMonth("prev")}
-                className="h-9 w-9 rounded-xl transition-all hover:bg-accent/50"
+                className="h-9 w-9 rounded transition-all hover:bg-accent/50"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -266,7 +266,7 @@ export function HabitTracker() {
                 variant="ghost"
                 size="icon"
                 onClick={() => navigateMonth("next")}
-                className="h-9 w-9 rounded-xl transition-all hover:bg-accent/50"
+                className="h-9 w-9 rounded transition-all hover:bg-accent/50"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -289,7 +289,7 @@ export function HabitTracker() {
             {/* Calendar Card */}
             <motion.div
               layout
-              className="glass flex flex-1 min-h-0 flex-col rounded-2xl p-4 sm:p-5 shadow-xl shadow-black/10 shadow-primary/[0.07] ring-1 ring-primary/[0.08]"
+              className="glass flex flex-1 min-h-0 flex-col rounded p-4 sm:p-5 shadow-xl shadow-black/10 shadow-primary/[0.07] ring-1 ring-primary/[0.08]"
             >
               <CalendarGrid onDayClick={handleDayClick} />
             </motion.div>

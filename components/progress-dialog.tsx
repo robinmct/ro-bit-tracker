@@ -53,7 +53,7 @@ export function ProgressDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-strong sm:max-w-sm rounded-2xl border-border/40 shadow-2xl shadow-primary/5">
+      <DialogContent className="glass-strong sm:max-w-sm rounded border-border/40 shadow-2xl shadow-primary/5">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold tracking-tight">
             Update Progress
@@ -82,7 +82,7 @@ export function ProgressDialog({
                 if (e.key === "Enter") handleSave();
               }}
               autoFocus
-              className="h-11 rounded-xl border-border/60 bg-background/50 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+              className="h-11 rounded border-border/60 bg-background/50 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </div>
@@ -91,14 +91,14 @@ export function ProgressDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="gap-1.5 rounded-xl border-border/60"
+            className="gap-1.5 rounded border-border/60"
           >
             <X className="h-4 w-4" />
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="gap-1.5 rounded-xl shadow-lg shadow-primary/15"
+            className="gap-1.5 rounded shadow-lg shadow-primary/15"
           >
             <Save className="h-4 w-4" />
             Save

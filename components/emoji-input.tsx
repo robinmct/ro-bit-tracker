@@ -63,7 +63,7 @@ export function EmojiInput({
             type="button"
             id={id}
             className={cn(
-              "flex h-10 w-full items-center justify-between rounded-lg border border-border/50 bg-background/40 px-3 py-2 text-sm transition-all hover:border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/15 focus:outline-none",
+              "flex h-10 w-full items-center justify-between rounded border border-border/50 bg-background/40 px-3 py-2 text-sm transition-all hover:border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/15 focus:outline-none",
               !displayValue && "text-muted-foreground",
               className
             )}

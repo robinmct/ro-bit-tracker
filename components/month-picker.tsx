@@ -41,7 +41,7 @@ export function MonthPicker({ open, onOpenChange }: MonthPickerProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-strong sm:max-w-sm rounded-2xl border-border/40 shadow-2xl shadow-primary/5">
+      <DialogContent className="glass-strong sm:max-w-sm rounded border-border/40 shadow-2xl shadow-primary/5">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg font-bold tracking-tight">
             <CalendarCheck className="h-5 w-5 text-primary" />
@@ -60,7 +60,7 @@ export function MonthPicker({ open, onOpenChange }: MonthPickerProps) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedMonth(i)}
-                className={`rounded-xl py-2.5 text-xs font-semibold transition-all ${
+                className={`rounded py-2.5 text-xs font-semibold transition-all ${
                   selectedMonth === i
                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                     : "bg-card/40 text-foreground hover:bg-card/60 border border-border/30"
@@ -76,7 +76,7 @@ export function MonthPicker({ open, onOpenChange }: MonthPickerProps) {
               variant="outline"
               size="icon"
               onClick={() => setSelectedYear((y) => y - 1)}
-              className="h-10 w-10 rounded-xl border-border/60 bg-background/40 transition-all hover:bg-background/60"
+              className="h-10 w-10 rounded border-border/60 bg-background/40 transition-all hover:bg-background/60"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -92,7 +92,7 @@ export function MonthPicker({ open, onOpenChange }: MonthPickerProps) {
               variant="outline"
               size="icon"
               onClick={() => setSelectedYear((y) => y + 1)}
-              className="h-10 w-10 rounded-xl border-border/60 bg-background/40 transition-all hover:bg-background/60"
+              className="h-10 w-10 rounded border-border/60 bg-background/40 transition-all hover:bg-background/60"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -103,13 +103,13 @@ export function MonthPicker({ open, onOpenChange }: MonthPickerProps) {
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="rounded-xl border-border/60"
+            className="rounded border-border/60"
           >
             Cancel
           </Button>
           <Button
             onClick={handleApply}
-            className="rounded-xl shadow-lg shadow-primary/15"
+            className="rounded shadow-lg shadow-primary/15"
           >
             Go to Month
           </Button>

@@ -87,7 +87,7 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-lg transition-all hover:bg-accent/50"
+          className="h-8 w-8 rounded transition-all hover:bg-accent/50"
           onClick={onAddHabit}
         >
           <Plus className="h-4 w-4" />
@@ -109,7 +109,7 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
                 key={habit.id}
                 onClick={() => setCurrentHabit(habit.id)}
                 className={cn(
-                  "group relative flex flex-col gap-2 rounded-xl border px-3 py-3 text-left transition-all cursor-pointer",
+                  "group relative flex flex-col gap-2 rounded border px-3 py-3 text-left transition-all cursor-pointer",
                   isSelected
                     ? "border-primary/30 bg-primary/8 shadow-lg shadow-primary/5"
                     : "border-border/30 bg-card/20 hover:border-border/60 hover:bg-card/40"
@@ -212,7 +212,7 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
 
       <Button
         variant="ghost"
-        className="group relative w-full gap-2 overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-r from-primary/[0.08] to-primary/[0.02] py-5 text-sm font-semibold text-primary transition-all hover:border-primary/40 hover:from-primary/[0.14] hover:to-primary/[0.06] hover:shadow-lg hover:shadow-primary/15"
+        className="group relative w-full gap-2 overflow-hidden rounded border border-primary/20 bg-gradient-to-r from-primary/[0.08] to-primary/[0.02] py-5 text-sm font-semibold text-primary transition-all hover:border-primary/40 hover:from-primary/[0.14] hover:to-primary/[0.06] hover:shadow-lg hover:shadow-primary/15"
         onClick={onAddHabit}
       >
         <span className="relative z-10 flex items-center gap-2">

@@ -53,7 +53,7 @@ export default function RegisterPage() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="w-full max-w-sm"
       >
-        <div className="glass-strong rounded-3xl p-6 shadow-2xl shadow-primary/5 sm:p-8">
+        <div className="glass-strong rounded p-6 shadow-2xl shadow-primary/5 sm:p-8">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -61,7 +61,7 @@ export default function RegisterPage() {
             transition={{ delay: 0.15, duration: 0.5 }}
             className="mb-8 flex items-center justify-center"
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+            <div className="flex h-14 w-14 items-center justify-center rounded bg-primary/10 ring-1 ring-primary/20">
               <Sparkles className="h-7 w-7 text-primary" />
             </div>
           </motion.div>
@@ -98,7 +98,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-11 rounded-xl border-border/60 bg-background/50 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                className="h-11 rounded border-border/60 bg-background/50 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div className="space-y-2">
@@ -112,14 +112,14 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-11 rounded-xl border-border/60 bg-background/50 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                className="h-11 rounded border-border/60 bg-background/50 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
             <Button
               type="submit"
               disabled={isLoading}
-              className="h-11 w-full gap-2 rounded-xl text-sm font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/30 active:scale-[0.98]"
+              className="h-11 w-full gap-2 rounded text-sm font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/30 active:scale-[0.98]"
             >
               {isLoading ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />

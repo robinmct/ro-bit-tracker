@@ -63,7 +63,7 @@ export function CommandMenu() {
         variant="outline"
         size="sm"
         onClick={() => setOpen(true)}
-        className="h-9 gap-2 rounded-xl border-border/60 bg-background/40 px-3 text-xs font-medium text-muted-foreground transition-all hover:bg-background/60 hover:text-foreground"
+        className="h-9 gap-2 rounded border-border/60 bg-background/40 px-3 text-xs font-medium text-muted-foreground transition-all hover:bg-background/60 hover:text-foreground"
       >
         <Search className="h-3.5 w-3.5" />
         <span className="hidden sm:inline">Command</span>
@@ -73,7 +73,7 @@ export function CommandMenu() {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="glass-strong overflow-hidden rounded-2xl border border-border/40 p-0 shadow-2xl shadow-primary/5 sm:max-w-lg">
+        <DialogContent className="glass-strong overflow-hidden rounded border border-border/40 p-0 shadow-2xl shadow-primary/5 sm:max-w-lg">
           <DialogHeader className="sr-only">
             <DialogTitle>Command Palette</DialogTitle>
             <DialogDescription>
@@ -99,7 +99,7 @@ export function CommandMenu() {
                     navigateMonth("prev");
                     setOpen(false);
                   }}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
                 >
                   <ChevronLeft className="h-4 w-4 text-muted-foreground" />
                   Previous Month
@@ -109,7 +109,7 @@ export function CommandMenu() {
                     navigateMonth("next");
                     setOpen(false);
                   }}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
                 >
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   Next Month
@@ -130,7 +130,7 @@ export function CommandMenu() {
                       setOpen(false);
                     }}
                     className={cn(
-                      "flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground",
+                      "flex cursor-pointer items-center gap-2 rounded px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground",
                       currentHabitId === habit.id && "bg-primary/5"
                     )}
                   >
@@ -160,7 +160,7 @@ export function CommandMenu() {
                     setOpen(false);
                     window.dispatchEvent(new CustomEvent("robit:add-habit"));
                   }}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
                 >
                   <Plus className="h-4 w-4 text-muted-foreground" />
                   Add New Habit
@@ -170,7 +170,7 @@ export function CommandMenu() {
                     setOpen(false);
                     window.dispatchEvent(new CustomEvent("robit:edit-habit"));
                   }}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
                 >
                   <Settings className="h-4 w-4 text-muted-foreground" />
                   Edit Current Habit
@@ -180,7 +180,7 @@ export function CommandMenu() {
                     handleSignOut();
                     setOpen(false);
                   }}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-2.5 text-sm text-foreground transition-colors aria-selected:bg-primary/10 aria-selected:text-foreground"
                 >
                   <LogOut className="h-4 w-4 text-muted-foreground" />
                   Sign Out

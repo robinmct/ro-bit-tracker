@@ -148,7 +148,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-strong sm:max-w-[420px] rounded-2xl border-primary/15 p-0 shadow-2xl shadow-primary/10 overflow-hidden">
+      <DialogContent className="glass-strong sm:max-w-[420px] rounded border-primary/15 p-0 shadow-2xl shadow-primary/10 overflow-hidden">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-xl font-bold tracking-tight">
             {mode === "add" ? "Add Habit" : "Edit Habit"}
@@ -162,13 +162,13 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
 
         <div className="px-6 pb-2">
           {/* Live Preview Card */}
-          <div className="mb-5 rounded-xl border border-primary/15 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] p-4">
+          <div className="mb-5 rounded border border-primary/15 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] p-4">
             <p className="mb-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
               Preview
             </p>
             <div className="flex items-center gap-3">
               <div
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded text-lg"
                 style={{ backgroundColor: `${color}18`, border: `1.5px solid ${color}40` }}
               >
                 {icon.trim() || <TypeIcon className="h-4 w-4" style={{ color }} />}
@@ -200,7 +200,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Morning Run"
-                className="h-10 rounded-lg border-border/50 bg-background/40 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
+                className="h-10 rounded border-border/50 bg-background/40 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
               />
             </div>
 
@@ -215,7 +215,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                 value={icon}
                 onChange={setIcon}
                 placeholder="Select emoji..."
-                className="h-10 rounded-lg border-border/50 bg-background/40"
+                className="h-10 rounded border-border/50 bg-background/40"
               />
             </div>
 
@@ -236,7 +236,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                       type="button"
                       onClick={() => setType(t)}
                       className={cn(
-                        "flex flex-col items-center gap-1.5 rounded-lg border px-2 py-2.5 text-center transition-all",
+                        "flex flex-col items-center gap-1.5 rounded border px-2 py-2.5 text-center transition-all",
                         isActive
                           ? "border-primary/40 bg-primary/10 text-foreground shadow-sm shadow-primary/10"
                           : "border-border/40 bg-card/30 text-muted-foreground hover:border-border/70 hover:bg-card/50"
@@ -269,7 +269,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                     min={1}
                     value={goal}
                     onChange={(e) => setGoal(e.target.value)}
-                    className="h-10 rounded-lg border-border/50 bg-background/40 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
+                    className="h-10 rounded border-border/50 bg-background/40 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
                   />
                 </motion.div>
               )}
@@ -339,7 +339,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowDeleteConfirm(true)}
-                      className="gap-1.5 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      className="gap-1.5 rounded text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Delete
@@ -351,7 +351,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-1.5"
+                    className="flex items-center gap-2 rounded border border-destructive/20 bg-destructive/5 px-3 py-1.5"
                   >
                     <span className="text-xs text-muted-foreground">Delete?</span>
                     <button
@@ -376,7 +376,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
             variant="outline"
             size="sm"
             onClick={() => onOpenChange(false)}
-            className="gap-1.5 rounded-lg border-border/60"
+            className="gap-1.5 rounded border-border/60"
           >
             <X className="h-3.5 w-3.5" />
             Cancel
@@ -384,7 +384,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
           <Button
             size="sm"
             onClick={handleSave}
-            className="gap-1.5 rounded-lg shadow-lg shadow-primary/15"
+            className="gap-1.5 rounded shadow-lg shadow-primary/15"
           >
             <Save className="h-3.5 w-3.5" />
             {mode === "add" ? "Create" : "Save"}
