@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useHabitStore } from "@/store/habit-store";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,45 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
   const habits = useHabitStore((s) => s.habits);
   const currentHabitId = useHabitStore((s) => s.currentHabitId);
   const setCurrentHabit = useHabitStore((s) => s.setCurrentHabit);
-  const monthCompletionPercent = useHabitStore((s) => s.monthCompletionPercent);
   const swapHabit = useHabitStore((s) => s.swapHabit);
+
+  const habitData = useHabitStore((s) => s.habitData);
+  const remoteData = useHabitStore((s) => s.remoteData);
+  const viewYear = useHabitStore((s) => s.viewYear);
+  const viewMonth = useHabitStore((s) => s.viewMonth);
+  const userId = useHabitStore((s) => s.userId);
+
+  const progressMap = useMemo(() => {
+    const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`;
+    const map: Record<string, number> = {};
+
+    for (const habit of habits) {
+      const source =
+        userId && remoteData[habit.id]?.[key]
+          ? remoteData[habit.id][key]
+          : habitData[habit.id]?.[key] || {};
+
+      const days = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+      if (habit.type === "binary") {
+        let done = 0;
+        for (let d = 1; d <= days; d++) {
+          if (source[d] === "done") done++;
+        }
+        map[habit.id] = Math.round((done / days) * 100);
+      } else {
+        const goal = Number(habit.goal) || 1;
+        let completed = 0;
+        for (let d = 1; d <= days; d++) {
+          const v = Math.max(0, Number(source[d] || 0));
+          if (v >= goal) completed++;
+        }
+        map[habit.id] = Math.round((completed / days) * 100);
+      }
+    }
+
+    return map;
+  }, [habits, habitData, remoteData, viewYear, viewMonth, userId]);
 
   const handleSwap = async (id: string, dir: "up" | "down") => {
     const before = useHabitStore.getState().habits;
@@ -65,7 +103,7 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
         >
           {habits.map((habit, index) => {
             const isSelected = habit.id === currentHabitId;
-            const pct = monthCompletionPercent(habit);
+            const pct = progressMap[habit.id] ?? 0;
             return (
               <div
                 key={habit.id}
@@ -153,12 +191,13 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted/60">
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{ backgroundColor: habit.color }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    <div
+                      className="h-full w-full rounded-full transition-transform duration-700 ease-out"
+                      style={{
+                        transform: `scaleX(${pct / 100})`,
+                        transformOrigin: "left",
+                        backgroundColor: habit.color,
+                      }}
                     />
                   </div>
                   <span className="text-[10px] font-bold tabular-nums text-muted-foreground">
