@@ -58,7 +58,7 @@ export function ProgressDialog({
           <DialogTitle className="text-lg font-bold tracking-tight">
             Update Progress
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="truncate text-muted-foreground">
             {dateStr} <span className="mx-1">&bull;</span> {habit.name}{" "}
             {habit.type === "time" ? "(minutes)" : ""}
           </DialogDescription>

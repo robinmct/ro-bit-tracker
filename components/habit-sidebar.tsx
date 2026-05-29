@@ -115,17 +115,17 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
                     : "border-border/30 bg-card/20 hover:border-border/60 hover:bg-card/40"
                 )}
               >
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 truncate text-left text-sm font-semibold">
-                    <span className="inline-flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex-1 min-w-0 text-left text-sm font-semibold">
+                    <span className="flex items-center gap-2 min-w-0">
                       <span
-                        className="h-3 w-3 rounded-full ring-2 ring-offset-2 ring-offset-background transition-all"
+                        className="h-3 w-3 shrink-0 rounded-full ring-2 ring-offset-2 ring-offset-background transition-all"
                         style={{
                           backgroundColor: habit.color,
                           boxShadow: isSelected ? `0 0 12px ${habit.color}50` : "none",
                         }}
                       />
-                      <span>
+                      <span className="truncate">
                         {habit.icon ? `${habit.icon} ` : ""}
                         {habit.name}
                       </span>

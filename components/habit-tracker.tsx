@@ -273,12 +273,12 @@ export function HabitTracker() {
             </div>
 
             {currentHabit && (
-              <div className="hidden items-center gap-2 sm:flex">
+              <div className="hidden min-w-0 items-center gap-2 sm:flex">
                 <span
-                  className="inline-block h-2.5 w-2.5 rounded-full"
+                  className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
                   style={{ backgroundColor: currentHabit.color }}
                 />
-                <span className="text-sm font-semibold text-foreground">
+                <span className="truncate text-sm font-semibold text-foreground">
                   {currentHabit.name}
                 </span>
               </div>
