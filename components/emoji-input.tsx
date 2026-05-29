@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -30,20 +30,33 @@ export function EmojiInput({
   className,
 }: EmojiInputProps) {
   const [open, setOpen] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const [marqueeOffset, setMarqueeOffset] = useState("0px");
+  const innerRef = useRef<HTMLSpanElement>(null);
+  const outerRef = useRef<HTMLSpanElement>(null);
   const { resolvedTheme } = useTheme();
 
   const displayValue = useMemo(() => filterEmojiChars(value), [value]);
 
+  useEffect(() => {
+    const inner = innerRef.current;
+    const outer = outerRef.current;
+    if (!inner || !outer) return;
+    const overflow = inner.scrollWidth - outer.clientWidth;
+    if (overflow > 0) {
+      setOverflows(true);
+      setMarqueeOffset(`-${overflow}px`);
+    } else {
+      setOverflows(false);
+    }
+  }, [displayValue]);
+
   const handleEmojiClick = useCallback(
     (emojiData: EmojiClickData) => {
-      const current = filterEmojiChars(value);
-      const next = current && !current.includes(emojiData.emoji)
-        ? current + emojiData.emoji
-        : emojiData.emoji;
-      onChange(next);
+      onChange(emojiData.emoji);
       setOpen(false);
     },
-    [value, onChange]
+    [onChange]
   );
 
   const handleClear = useCallback(
@@ -68,8 +81,21 @@ export function EmojiInput({
               className
             )}
           >
-            <span className="truncate">
-              {displayValue || placeholder || "Select emoji..."}
+            <span ref={outerRef} className="min-w-0 overflow-hidden">
+              <span
+                ref={innerRef}
+                className={cn(
+                  "inline-block whitespace-nowrap",
+                  overflows && "animate-marquee"
+                )}
+                style={
+                  overflows
+                    ? ({ "--marquee-offset": marqueeOffset } as React.CSSProperties)
+                    : undefined
+                }
+              >
+                {displayValue || placeholder || "Select emoji..."}
+              </span>
             </span>
             {displayValue && (
               <span
