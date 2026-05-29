@@ -10,6 +10,9 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata = {
   title: "Ro-bit — Habit Tracker",
   description: "A beautifully designed habit tracker for building better routines",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
