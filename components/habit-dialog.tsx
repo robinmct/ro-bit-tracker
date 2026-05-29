@@ -16,16 +16,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
 import { Trash2, Save, X, Check, Target, Hash, Clock, Palette, Type, Smile } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EmojiInput } from "@/components/emoji-input";
 
 const PRESET_COLORS = [
   "#a78bfa", "#8b5cf6", "#6366f1", "#3b82f6",
@@ -86,7 +80,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
   const handleSave = async () => {
     const trimmedName = name.trim() || "New Habit";
     const numGoal = type === "binary" ? 1 : Number(goal) || 1;
-
+    const safeIcon = icon.trim();
     try {
       if (mode === "add") {
         const habit = addHabit({
@@ -94,7 +88,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
           type,
           goal: numGoal,
           color,
-          icon: icon.trim(),
+          icon: safeIcon,
         });
         if (user) {
           await setDoc(doc(getDbInstance(), "users", user.uid, "habits", habit.id), {
@@ -113,7 +107,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
           type,
           goal: numGoal,
           color,
-          icon: icon.trim(),
+          icon: safeIcon,
         });
         if (user) {
           await setDoc(doc(getDbInstance(), "users", user.uid, "habits", current.id), {
@@ -121,7 +115,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
             type,
             goal: numGoal,
             color,
-            icon: icon.trim(),
+            icon: safeIcon,
             order: current.order,
           });
         }
@@ -216,12 +210,12 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                 <Smile className="h-3 w-3" />
                 Icon (emoji)
               </Label>
-              <Input
+              <EmojiInput
                 id="habit-icon"
                 value={icon}
-                onChange={(e) => setIcon(e.target.value)}
-                placeholder="e.g., 🏃 🧘 📚"
-                className="h-10 rounded-lg border-border/50 bg-background/40 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
+                onChange={setIcon}
+                placeholder="Select emoji..."
+                className="h-10 rounded-lg border-border/50 bg-background/40"
               />
             </div>
 
