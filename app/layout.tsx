@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
-  title: "Ro-bit — Habit Tracker",
+  title: "Ro-bit",
   description: "A beautifully designed habit tracker for building better routines",
   icons: {
     icon: "/favicon.svg",
