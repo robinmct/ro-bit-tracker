@@ -246,8 +246,8 @@ export function HabitTracker() {
         {/* Calendar + Stats */}
         <main className="flex flex-1 flex-col overflow-hidden">
           {/* Month Navigation */}
-          <div className="flex shrink-0 items-center justify-between border-b border-border/40 px-4 py-3.5 sm:px-6">
-            <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center justify-between border-b border-border/40 px-4 py-2 sm:px-6">
+            <div className="flex items-center">
               <Button
                 variant="ghost"
                 size="icon"
@@ -258,7 +258,7 @@ export function HabitTracker() {
               </Button>
               <button
                 onClick={() => setMonthPickerOpen(true)}
-                className="min-w-[140px] text-center text-base font-bold tracking-tight transition-colors hover:text-muted-foreground sm:min-w-[180px] sm:text-lg"
+                className="flex h-9 items-center justify-center px-2 min-w-[160px] text-center text-xl font-bold tracking-tight transition-colors hover:text-muted-foreground sm:min-w-[200px] sm:text-2xl"
               >
                 {monthLabel}
               </button>
@@ -271,9 +271,21 @@ export function HabitTracker() {
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
+
+            {currentHabit && (
+              <div className="hidden items-center gap-2 sm:flex">
+                <span
+                  className="inline-block h-2.5 w-2.5 rounded-full"
+                  style={{ backgroundColor: currentHabit.color }}
+                />
+                <span className="text-sm font-semibold text-foreground">
+                  {currentHabit.name}
+                </span>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-1 min-h-0 flex-col gap-4 p-4 sm:gap-5 sm:p-6">
+          <div className="flex flex-1 min-h-0 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
             {/* Calendar Card */}
             <motion.div
               layout

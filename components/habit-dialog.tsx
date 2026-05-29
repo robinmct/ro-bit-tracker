@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { getDbInstance, doc, setDoc, deleteDoc } from "@/lib/firebase";
@@ -57,8 +57,16 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
   const [color, setColor] = useState("#a78bfa");
   const [icon, setIcon] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
+    if (!open) {
+      initializedRef.current = false;
+      return;
+    }
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
     if (mode === "edit" && current) {
       setName(current.name);
       setType(current.type);
@@ -79,44 +87,52 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
     const trimmedName = name.trim() || "New Habit";
     const numGoal = type === "binary" ? 1 : Number(goal) || 1;
 
-    if (mode === "add") {
-      const habit = addHabit({
-        name: trimmedName,
-        type,
-        goal: numGoal,
-        color,
-        icon: icon.trim(),
-      });
-      if (user) {
-        await setDoc(doc(getDbInstance(), "users", user.uid, "habits", habit.id), {
-          name: habit.name,
-          type: habit.type,
-          goal: habit.goal,
-          color: habit.color,
-          icon: habit.icon,
-        });
-      }
-      toast.success("Habit created");
-    } else if (current) {
-      updateHabit(current.id, {
-        name: trimmedName,
-        type,
-        goal: numGoal,
-        color,
-        icon: icon.trim(),
-      });
-      if (user) {
-        await setDoc(doc(getDbInstance(), "users", user.uid, "habits", current.id), {
+    try {
+      if (mode === "add") {
+        const habit = addHabit({
           name: trimmedName,
           type,
           goal: numGoal,
           color,
           icon: icon.trim(),
         });
+        if (user) {
+          await setDoc(doc(getDbInstance(), "users", user.uid, "habits", habit.id), {
+            name: habit.name,
+            type: habit.type,
+            goal: habit.goal,
+            color: habit.color,
+            icon: habit.icon,
+            order: habit.order,
+          });
+        }
+        toast.success("Habit created");
+      } else if (current) {
+        updateHabit(current.id, {
+          name: trimmedName,
+          type,
+          goal: numGoal,
+          color,
+          icon: icon.trim(),
+        });
+        if (user) {
+          await setDoc(doc(getDbInstance(), "users", user.uid, "habits", current.id), {
+            name: trimmedName,
+            type,
+            goal: numGoal,
+            color,
+            icon: icon.trim(),
+            order: current.order,
+          });
+        }
+        toast.success("Habit updated");
       }
-      toast.success("Habit updated");
+    } catch (err) {
+      toast.error("Failed to save habit");
+      console.error(err);
+    } finally {
+      onOpenChange(false);
     }
-    onOpenChange(false);
   };
 
   const handleDelete = async () => {

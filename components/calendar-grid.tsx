@@ -99,13 +99,13 @@ export function CalendarGrid({ onDayClick }: CalendarGridProps) {
               key={day}
               onClick={() => onDayClick(day)}
               className={cn(
-                "group relative flex flex-col items-center justify-center rounded-lg border text-sm font-semibold transition-all min-h-[48px] sm:min-h-[64px]",
+                "group relative flex flex-col items-center justify-center rounded border text-sm font-semibold transition-all min-h-[48px] sm:min-h-[64px]",
                 "hover:scale-[1.04] active:scale-95 duration-150",
                 done
-                  ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"
+                  ? "border-emerald-500/70 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"
                   : miss
-                  ? "border-rose-500/40 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30"
-                  : "border-border/70 bg-card/55 text-foreground hover:border-primary/40 hover:bg-primary/10",
+                  ? "border-rose-500/70 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30"
+                  : "border-border bg-card/55 text-foreground hover:border-primary/50 hover:bg-primary/10",
                 isToday && "ring-2 ring-primary/60 ring-offset-2 ring-offset-background shadow-lg shadow-primary/10"
               )}
             >
