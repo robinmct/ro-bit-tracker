@@ -31,6 +31,7 @@ interface HabitState {
   remoteData: HabitDataMap;
   userId: string | null;
 
+  resetState: () => void;
   setUserId: (id: string | null) => void;
   addHabit: (habit: Omit<Habit, "id">) => Habit;
   updateHabit: (id: string, updates: Partial<Omit<Habit, "id">>) => void;
@@ -63,6 +64,8 @@ export const useHabitStore = create<HabitState>()(
       viewMonth: new Date().getMonth(),
       remoteData: {},
       userId: null,
+
+      resetState: () => set({ habits: [], habitData: {}, currentHabitId: null, remoteData: {}, userId: null }),
 
       setUserId: (id) => set({ userId: id }),
 
@@ -189,18 +192,14 @@ export const useHabitStore = create<HabitState>()(
 
       loadFromRemote: (habits) => {
         set((s) => {
-          const merged = [...s.habits];
-          const data = { ...s.habitData };
+          const data: HabitDataMap = {};
           habits.forEach((h) => {
-            if (!merged.find((x) => x.id === h.id)) {
-              merged.push(h);
-            }
-            data[h.id] = data[h.id] || {};
+            data[h.id] = s.habitData[h.id] || {};
           });
           return {
-            habits: merged,
+            habits: [...habits],
             habitData: data,
-            currentHabitId: s.currentHabitId || habits[0]?.id || null,
+            currentHabitId: habits[0]?.id || null,
           };
         });
       },
@@ -332,9 +331,8 @@ export const useHabitStore = create<HabitState>()(
     {
       name: STORAGE_KEY,
       partialize: (state) => ({
-        habits: state.habits,
-        habitData: state.habitData,
-        currentHabitId: state.currentHabitId,
+        viewYear: state.viewYear,
+        viewMonth: state.viewMonth,
       }),
     }
   )

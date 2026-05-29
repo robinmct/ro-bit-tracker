@@ -11,15 +11,18 @@ export default function HomePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const setUserId = useHabitStore((s) => s.setUserId);
+  const resetState = useHabitStore((s) => s.resetState);
 
   useEffect(() => {
     if (!loading && !user) {
+      resetState();
       router.replace("/login");
     }
     if (user) {
+      resetState();
       setUserId(user.uid);
     }
-  }, [user, loading, router, setUserId]);
+  }, [user, loading, router, setUserId, resetState]);
 
   if (loading) {
     return (

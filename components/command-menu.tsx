@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 
 export function CommandMenu() {
   const [open, setOpen] = useState(false);
-  const { habits, currentHabitId, setCurrentHabit, navigateMonth } = useHabitStore();
+  const { habits, currentHabitId, setCurrentHabit, navigateMonth, resetState } = useHabitStore();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -49,6 +49,7 @@ export function CommandMenu() {
 
   const handleSignOut = async () => {
     try {
+      resetState();
       await signOut(getAuthInstance());
       window.location.reload();
     } catch {

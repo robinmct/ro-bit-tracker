@@ -28,6 +28,7 @@ export function HabitTracker() {
     getCurrentHabit,
     loadFromRemote,
     setUserId,
+    resetState,
     getMonthData,
     setMark: storeSetMark,
     setRemoteData,
@@ -56,8 +57,11 @@ export function HabitTracker() {
 
   // Sync user ID
   useEffect(() => {
-    if (user?.uid) setUserId(user.uid);
-  }, [user, setUserId]);
+    if (user?.uid) {
+      resetState();
+      setUserId(user.uid);
+    }
+  }, [user, setUserId, resetState]);
 
   // Load habits from Firestore
   useEffect(() => {
@@ -130,6 +134,7 @@ export function HabitTracker() {
 
   const handleSignOut = async () => {
     try {
+      resetState();
       await signOut(getAuthInstance());
       window.location.reload();
     } catch {
