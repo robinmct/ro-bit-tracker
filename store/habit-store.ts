@@ -144,6 +144,7 @@ export function computeStats(
       ? now.getDate()
       : daysInMonth;
   let curr = 0;
+  let foundDone = false;
   for (let i = fullKeys.length - 1; i >= 0; i--) {
     const [yy, mm] = fullKeys[i].split("-").map(Number);
     const data =
@@ -153,8 +154,13 @@ export function computeStats(
     let startD = daysIn;
     if (yy === year && mm === month + 1) startD = endDay;
     for (let d = startD; d >= 1; d--) {
-      if (isDone(data[d])) {
+      const val = data[d];
+      if (isDone(val)) {
         curr++;
+        foundDone = true;
+      } else if (!foundDone && (val == null || val === "")) {
+        // skip untracked days before the streak starts
+        continue;
       } else {
         i = -1;
         break;

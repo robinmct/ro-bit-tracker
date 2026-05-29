@@ -246,7 +246,7 @@ export function HabitTracker() {
         {/* Calendar + Stats */}
         <main className="flex flex-1 flex-col overflow-hidden">
           {/* Month Navigation */}
-          <div className="flex shrink-0 items-center justify-between border-b border-border/40 px-4 py-2 sm:px-6">
+          <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-2 sm:px-6">
             <div className="flex items-center">
               <Button
                 variant="ghost"
