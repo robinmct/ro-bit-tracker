@@ -2,6 +2,8 @@
 
 A beautifully designed, interactive habit tracker built to help you build better routines. Track daily habits, visualize progress on a calendar, and stay motivated with streaks and stats &mdash; all wrapped in a polished dark amethyst theme.
 
+**Live:** [ro-bit-tracker.vercel.app](https://ro-bit-tracker.vercel.app/)
+
 ---
 
 ## Features
