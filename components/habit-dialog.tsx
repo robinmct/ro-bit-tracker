@@ -148,7 +148,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-strong sm:max-w-[420px] rounded border-primary/15 p-0 shadow-2xl shadow-primary/10 overflow-hidden">
+      <DialogContent className="glass-strong sm:max-w-[420px] rounded border-primary/15 p-0 shadow-2xl shadow-primary/10 overflow-hidden flex flex-col">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-xl font-bold tracking-tight">
             {mode === "add" ? "Add Habit" : "Edit Habit"}
@@ -200,6 +200,7 @@ export function HabitDialog({ open, onOpenChange, mode }: HabitDialogProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Morning Run"
+                maxLength={50}
                 className="h-10 rounded border-border/50 bg-background/40 transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
               />
             </div>

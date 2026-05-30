@@ -42,13 +42,22 @@ export function EmojiInput({
     const inner = innerRef.current;
     const outer = outerRef.current;
     if (!inner || !outer) return;
-    const overflow = inner.scrollWidth - outer.clientWidth;
-    if (overflow > 0) {
-      setOverflows(true);
-      setMarqueeOffset(`-${overflow}px`);
-    } else {
-      setOverflows(false);
-    }
+
+    const measure = () => {
+      const overflow = inner.scrollWidth - outer.clientWidth;
+      if (overflow > 0) {
+        setOverflows(true);
+        setMarqueeOffset(`-${overflow}px`);
+      } else {
+        setOverflows(false);
+      }
+    };
+
+    measure();
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(outer);
+    return () => ro.disconnect();
   }, [displayValue]);
 
   const handleEmojiClick = useCallback(

@@ -6,6 +6,7 @@ import { useHabitStore } from "@/store/habit-store";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Pencil, ChevronUp, ChevronDown } from "lucide-react";
+import { MarqueeText } from "@/components/marquee-text";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { getDbInstance, doc, setDoc } from "@/lib/firebase";
@@ -125,10 +126,10 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
                           boxShadow: isSelected ? `0 0 12px ${habit.color}50` : "none",
                         }}
                       />
-                      <span className="truncate">
+                      <MarqueeText>
                         {habit.icon ? `${habit.icon} ` : ""}
                         {habit.name}
-                      </span>
+                      </MarqueeText>
                     </span>
                   </div>
 

@@ -231,3 +231,8 @@
 .animate-marquee {
   animation: marquee 3s ease-in-out infinite;
 }
+
+/* Marquee hover for text overflow */
+.marquee-container:hover .marquee-content {
+  animation: marquee 3.5s ease-in-out infinite;
+}
