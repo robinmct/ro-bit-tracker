@@ -187,7 +187,7 @@ export function HabitTracker() {
           <SheetTrigger className="inline-flex items-center justify-center rounded text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-10 w-10 md:hidden">
             <Menu className="h-5 w-5" />
           </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] border-border/40 bg-background/80 p-0 backdrop-blur-2xl">
+          <SheetContent side="left" className="w-[300px] border-border/40 bg-background/80 pt-12 pb-4 px-4 backdrop-blur-2xl">
             <SheetTitle className="sr-only">Habits</SheetTitle>
             <SheetDescription className="sr-only">
               Select a habit to view and track your progress.
@@ -201,6 +201,7 @@ export function HabitTracker() {
                 setSidebarOpen(false);
                 setEditHabitOpen(true);
               }}
+              showTopAddButton={false}
             />
           </SheetContent>
         </Sheet>

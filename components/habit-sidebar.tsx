@@ -14,9 +14,10 @@ import { getDbInstance, doc, setDoc } from "@/lib/firebase";
 interface HabitSidebarProps {
   onAddHabit: () => void;
   onEditHabit: () => void;
+  showTopAddButton?: boolean;
 }
 
-export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
+export function HabitSidebar({ onAddHabit, onEditHabit, showTopAddButton = true }: HabitSidebarProps) {
   const { user } = useAuth();
   const habits = useHabitStore((s) => s.habits);
   const currentHabitId = useHabitStore((s) => s.currentHabitId);
@@ -85,14 +86,16 @@ export function HabitSidebar({ onAddHabit, onEditHabit }: HabitSidebarProps) {
         <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground">
           Your Habits
         </h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 rounded transition-all hover:bg-accent/50"
-          onClick={onAddHabit}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
+        {showTopAddButton && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded transition-all hover:bg-accent/50"
+            onClick={onAddHabit}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
       <ScrollArea className="flex-1">
