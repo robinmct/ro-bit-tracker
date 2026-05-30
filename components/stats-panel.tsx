@@ -86,7 +86,7 @@ export function StatsPanel() {
   ];
 
   return (
-    <div className="flex shrink-0 overflow-x-auto gap-2 snap-x snap-mandatory sm:grid sm:grid-cols-5 sm:gap-3 sm:overflow-visible">
+    <div className="grid shrink-0 grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-3 max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory">
       {items.map((item, i) => (
         <motion.div
           key={item.label}
@@ -94,7 +94,8 @@ export function StatsPanel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 + i * 0.05, duration: 0.4 }}
           className={cn(
-            "glass flex min-w-[110px] flex-1 snap-start flex-col items-center justify-center gap-0.5 rounded p-2 transition-all hover:shadow-lg sm:min-w-0 sm:p-3",
+            "glass flex flex-col items-center justify-center gap-0.5 rounded sm:rounded p-2 sm:p-3 transition-all hover:shadow-lg",
+            "max-sm:min-w-[110px] max-sm:flex-1 max-sm:snap-start",
             item.border
           )}
         >
