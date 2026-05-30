@@ -86,7 +86,7 @@ export function StatsPanel() {
   ];
 
   return (
-    <div className="grid shrink-0 grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-3 max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory">
+    <div className="grid shrink-0 grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-3 max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory max-sm:pb-6">
       {items.map((item, i) => (
         <motion.div
           key={item.label}
