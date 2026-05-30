@@ -180,7 +180,7 @@ export function HabitTracker() {
   const titleName = user?.displayName?.split(" ")[0] || user?.email?.split("@")[0];
 
   return (
-    <div className="flex min-h-svh flex-col">
+    <div className="flex h-svh flex-col">
       {/* Glass Header */}
       <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/40 bg-background/60 px-4 backdrop-blur-xl sm:px-6">
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>

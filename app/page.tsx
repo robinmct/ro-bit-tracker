@@ -25,7 +25,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-svh flex-col items-center justify-center gap-4">
+      <div className="flex h-svh flex-col items-center justify-center gap-4">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
